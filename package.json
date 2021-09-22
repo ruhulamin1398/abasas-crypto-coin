@@ -4,5 +4,8 @@
   "main": "index.js",
   "repository": "https://github.com/ruhulamin1398/abasas-crypto-coin.git",
   "author": "Ruhul Amin <43258231+ruhulaminrul@users.noreply.github.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "crypto-js": "^4.1.1"
+  }
 }
