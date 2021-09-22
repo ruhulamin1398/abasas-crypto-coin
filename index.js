@@ -31,13 +31,30 @@ class Blocchain{
         return new Block('2021-01-02','GENESIS',"0000");
 
     }
+
+
+    isBlockchainValid(){
+        for(let i=1 ; i< this.chain.length ; i++){
+            const currentBlock = this.chain[i];
+            const previousBlock= this. chain[i-1];
+            if(currentBlock.hash != currentBlock.calculateHash()){
+                return false;
+            }
+            if(currentBlock.previousHash != previousBlock.hash){
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
-const block = new Block("2016-01-01",{amount:10},"sdafsafasfsdafsadf")
+let block = new Block("2016-01-01",{amount:10},"sdafsafasfsdafsadf")
 const abasas_crypto_coin= new Blocchain();
 abasas_crypto_coin.addBlock(block)
 
 
+
+console.log(abasas_crypto_coin.isBlockchainValid());
 
 const block2 = new Block("2016-01-01",{amount:12},"1111")
 abasas_crypto_coin.addBlock(block2)
@@ -45,6 +62,7 @@ abasas_crypto_coin.addBlock(block2)
 
 // console.log(abasas_crypto_coin);
 
-abasas_crypto_coin.chain[1].previousHash = "hacked";
+abasas_crypto_coin.chain[1].data = "hacked";
 
+console.log(abasas_crypto_coin.isBlockchainValid());
 console.log(abasas_crypto_coin);
