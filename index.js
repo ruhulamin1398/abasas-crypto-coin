@@ -1,15 +1,15 @@
 const sha256 = require('crypto-js/sha256');
 class Block{
-    constructor (timestamp,data){
+    constructor (timestamp,transections){
         this.timestamp= timestamp;
-        this.data= data;
+        this.transections= transections;
         this.hash = this.calculateHash();
         this.nonce=0;
 
     }
     calculateHash(){
-        // console.log(sha256(this.nonce + this.timestamp + JSON.stringify( this.data ) +  this.previousHash).toString());
-        return sha256(this.nonce + this.timestamp + JSON.stringify( this.data ) +  this.previousHash).toString();
+        // console.log(sha256(this.nonce + this.timestamp + JSON.stringify( this.transections ) +  this.previousHash).toString());
+        return sha256(this.nonce + this.timestamp + JSON.stringify( this.transections ) +  this.previousHash).toString();
     }
 
 
@@ -30,25 +30,45 @@ class Block{
     }
 }
 
+class Transection{
+    constructor(fromAddress, toAddress, amount){
+        this.fromAddress= fromAddress;
+        this.toAddress= toAddress;
+        this.amount= amount;
+    }
+}
 
 class Blockhain{
     constructor(){
         this.chain=[this.generateGenesisBlock()];
-        this.difficulty=4;
+        this.difficulty=1;
+        this.pendingTransections= [];
+        this.miningReward= 10;
+    }
+    createTransection(transection){
+        this.pendingTransections.push(transection);
 
     }
-    addBlock(newBlock){
-        newBlock.previousHash= this.getLetestBlock().hash;
-        newBlock.mineBlock(this.difficulty);
-        newBlock.hash= newBlock.calculateHash();
-        this.chain.push(newBlock)
+    minePendingTransections(minerAddress){
+        let block = new Block(Date.now(), this.pendingTransections)
+        block.mineBlock(this.difficulty);
+        this.chain.push(block);
+        this.pendingTransections=[
+            new Transection(null ,minerAddress, this.miningReward)
+        ];
     }
+    // addBlock(newBlock){
+    //     newBlock.previousHash= this.getLetestBlock().hash;
+    //     newBlock.mineBlock(this.difficulty);
+    //     newBlock.hash= newBlock.calculateHash();
+    //     this.chain.push(newBlock)
+    // }
     getLetestBlock(){
         return this.chain[this.chain.length-1];
     }
 
     generateGenesisBlock(){
-        return new Block('2021-01-02','GENESIS',"0000");
+        return new Block(Date.now(),'GENESIS',"0000");
 
     }
 
@@ -66,6 +86,23 @@ class Blockhain{
         }
         return true;
     }
+
+    getBalenceOfAddress(address){
+        let balace= 0;
+        for(const block of this.chain) {
+            for(const transection of block.transections){
+
+                if(transection.fromAddress === address){
+                    balace -= transection.amount;
+                }
+                 if(transection.toAddress === address){
+                    balace += transection.amount;
+                }
+            }
+        }
+        return balace;
+      
+    }
 }
 
 const abasas_crypto_coin= new Blockhain();
@@ -73,23 +110,17 @@ const abasas_crypto_coin= new Blockhain();
 
 
 
-let block1 = new Block("2016-01-01",{amount:10})
-// console.log(block);
+abasas_crypto_coin.createTransection(new Transection('address1','address22',1100));
+abasas_crypto_coin.createTransection(new Transection('address1','address22',2200));
+abasas_crypto_coin.createTransection(new Transection('address2','address1',10012));
+abasas_crypto_coin.createTransection(new Transection('address2','address1',1120));
 
-// console.log(abasas_crypto_coin);
-abasas_crypto_coin.addBlock(block1)
+abasas_crypto_coin.minePendingTransections('ruhul')
+abasas_crypto_coin.minePendingTransections('ruhul')
+console.log(abasas_crypto_coin.getBalenceOfAddress('address1'));
+console.log(abasas_crypto_coin.getBalenceOfAddress('address2'));
+console.log(abasas_crypto_coin.getBalenceOfAddress('address22'));
+console.log(abasas_crypto_coin.getBalenceOfAddress('ruhul'));
 
 
-
-// console.log(abasas_crypto_coin.isBlockchainValid());
-
-const block2 = new Block("2016-01-01",{amount:12},"1111")
-abasas_crypto_coin.addBlock(block2)
-
-
-// console.log(abasas_crypto_coin);
-
-// abasas_crypto_coin.chain[1].data = "hacked";
-
-// console.log(abasas_crypto_coin.isBlockchainValid());
-console.log(abasas_crypto_coin);
+console.log(abasas_crypto_coin)
