@@ -1,25 +1,45 @@
 const sha256 = require('crypto-js/sha256');
 class Block{
-    constructor (timestamp,data,previousHash){
+    constructor (timestamp,data){
         this.timestamp= timestamp;
         this.data= data;
-        this.previousHash= previousHash;
         this.hash = this.calculateHash();
+        this.nonce=0;
 
     }
     calculateHash(){
-        return sha256(this.timestamp + JSON.stringify( this.data ) +  this.previousHash).toString()
+        // console.log(sha256(this.nonce + this.timestamp + JSON.stringify( this.data ) +  this.previousHash).toString());
+        return sha256(this.nonce + this.timestamp + JSON.stringify( this.data ) +  this.previousHash).toString();
+    }
+
+
+    mineBlock(difficulty){
+        
+
+        while(this.hash.toString().substring(0,difficulty) !== Array(difficulty + 1).join("0")){
+
+            // console.log(this.hash.toString().substring(0,difficulty) + " " +Array(difficulty + 1).join("0"));
+            // console.log(this.nonce);
+            // console.log(this.hash)
+
+            this.nonce ++;
+            this.hash= this.calculateHash();
+        }
+        // console.log(this.hash);
+        console.log("mining done "+this.hash);
     }
 }
 
 
-class Blocchain{
+class Blockhain{
     constructor(){
         this.chain=[this.generateGenesisBlock()];
+        this.difficulty=4;
 
     }
     addBlock(newBlock){
         newBlock.previousHash= this.getLetestBlock().hash;
+        newBlock.mineBlock(this.difficulty);
         newBlock.hash= newBlock.calculateHash();
         this.chain.push(newBlock)
     }
@@ -48,13 +68,20 @@ class Blocchain{
     }
 }
 
-let block = new Block("2016-01-01",{amount:10},"sdafsafasfsdafsadf")
-const abasas_crypto_coin= new Blocchain();
-abasas_crypto_coin.addBlock(block)
+const abasas_crypto_coin= new Blockhain();
 
 
 
-console.log(abasas_crypto_coin.isBlockchainValid());
+
+let block1 = new Block("2016-01-01",{amount:10})
+// console.log(block);
+
+// console.log(abasas_crypto_coin);
+abasas_crypto_coin.addBlock(block1)
+
+
+
+// console.log(abasas_crypto_coin.isBlockchainValid());
 
 const block2 = new Block("2016-01-01",{amount:12},"1111")
 abasas_crypto_coin.addBlock(block2)
@@ -62,7 +89,7 @@ abasas_crypto_coin.addBlock(block2)
 
 // console.log(abasas_crypto_coin);
 
-abasas_crypto_coin.chain[1].data = "hacked";
+// abasas_crypto_coin.chain[1].data = "hacked";
 
-console.log(abasas_crypto_coin.isBlockchainValid());
+// console.log(abasas_crypto_coin.isBlockchainValid());
 console.log(abasas_crypto_coin);
