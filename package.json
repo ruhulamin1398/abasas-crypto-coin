@@ -1,0 +1,8 @@
+{
+  "name": "abasas-crypto-coin",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ruhulamin1398/abasas-crypto-coin.git",
+  "author": "Ruhul Amin <43258231+ruhulaminrul@users.noreply.github.com>",
+  "license": "MIT"
+}
